@@ -1,0 +1,509 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		590110331DC7E98500B5CD8E /* libqhy_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 590110241DC7E7D400B5CD8E /* libqhy_test.c */; };
+		590110341DC7E9B700B5CD8E /* liblibqhy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599ADD251DC7C66B000D85FD /* liblibqhy.a */; };
+		590110351DC7E9CA00B5CD8E /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599ADD301DC7C780000D85FD /* libusb-1.0.a */; };
+		590110381DC7E9DF00B5CD8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590110371DC7E9DF00B5CD8E /* Cocoa.framework */; };
+		5901103A1DC7E9E400B5CD8E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590110391DC7E9E400B5CD8E /* IOKit.framework */; };
+		5901103C1DC8A92200B5CD8E /* libqhy_5ii_firmware.c in Sources */ = {isa = PBXBuildFile; fileRef = 5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */; };
+		5901103E1DC8AAED00B5CD8E /* libqhy_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 5901103D1DC8AAED00B5CD8E /* libqhy_base.h */; };
+		590112A01DC9438300B5CD8E /* libqhy_5ii.c in Sources */ = {isa = PBXBuildFile; fileRef = 5901129F1DC9438300B5CD8E /* libqhy_5ii.c */; };
+		599ADD3D1DC7CBD8000D85FD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 599ADD3C1DC7CBD8000D85FD /* main.c */; };
+		599ADD431DC7D946000D85FD /* libqhy.c in Sources */ = {isa = PBXBuildFile; fileRef = 599ADD421DC7D946000D85FD /* libqhy.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		590110311DC7E97F00B5CD8E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 599ADD1D1DC7C66B000D85FD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 599ADD241DC7C66B000D85FD;
+			remoteInfo = libqhy;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		590110281DC7E97300B5CD8E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		599ADD381DC7CBD8000D85FD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		590110231DC7E6F700B5CD8E /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		590110241DC7E7D400B5CD8E /* libqhy_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_test.c; sourceTree = "<group>"; };
+		5901102A1DC7E97300B5CD8E /* libqhy_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libqhy_test; sourceTree = BUILT_PRODUCTS_DIR; };
+		590110371DC7E9DF00B5CD8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		590110391DC7E9E400B5CD8E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_5ii_firmware.c; sourceTree = "<group>"; };
+		5901103D1DC8AAED00B5CD8E /* libqhy_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libqhy_base.h; sourceTree = "<group>"; };
+		5901129F1DC9438300B5CD8E /* libqhy_5ii.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_5ii.c; sourceTree = "<group>"; };
+		599ADD251DC7C66B000D85FD /* liblibqhy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibqhy.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		599ADD2D1DC7C75F000D85FD /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		599ADD2E1DC7C76C000D85FD /* libqhy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libqhy.h; path = include/libqhy/libqhy.h; sourceTree = "<group>"; };
+		599ADD2F1DC7C774000D85FD /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libusb.h; path = "include/libusb-1.0/libusb.h"; sourceTree = "<group>"; };
+		599ADD301DC7C780000D85FD /* libusb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libusb-1.0.a"; path = "lib/macOS/libusb-1.0.a"; sourceTree = "<group>"; };
+		599ADD341DC7C915000D85FD /* QHY5II.HEX */ = {isa = PBXFileReference; lastKnownFileType = text; path = QHY5II.HEX; sourceTree = "<group>"; };
+		599ADD3A1DC7CBD8000D85FD /* convert_firmware */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = convert_firmware; sourceTree = BUILT_PRODUCTS_DIR; };
+		599ADD3C1DC7CBD8000D85FD /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; wrapsLines = 0; };
+		599ADD411DC7D8FB000D85FD /* libqhy_5ii.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libqhy_5ii.h; sourceTree = "<group>"; };
+		599ADD421DC7D946000D85FD /* libqhy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		590110271DC7E97300B5CD8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5901103A1DC7E9E400B5CD8E /* IOKit.framework in Frameworks */,
+				590110381DC7E9DF00B5CD8E /* Cocoa.framework in Frameworks */,
+				590110341DC7E9B700B5CD8E /* liblibqhy.a in Frameworks */,
+				590110351DC7E9CA00B5CD8E /* libusb-1.0.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		599ADD221DC7C66B000D85FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		599ADD371DC7CBD8000D85FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		590110361DC7E9DF00B5CD8E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				590110391DC7E9E400B5CD8E /* IOKit.framework */,
+				590110371DC7E9DF00B5CD8E /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		599ADD1C1DC7C66B000D85FD = {
+			isa = PBXGroup;
+			children = (
+				599ADD2D1DC7C75F000D85FD /* Makefile */,
+				590110231DC7E6F700B5CD8E /* config.h */,
+				599ADD2E1DC7C76C000D85FD /* libqhy.h */,
+				5901103D1DC8AAED00B5CD8E /* libqhy_base.h */,
+				599ADD411DC7D8FB000D85FD /* libqhy_5ii.h */,
+				5901129F1DC9438300B5CD8E /* libqhy_5ii.c */,
+				5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */,
+				599ADD421DC7D946000D85FD /* libqhy.c */,
+				590110241DC7E7D400B5CD8E /* libqhy_test.c */,
+				599ADD321DC7C7BC000D85FD /* Firmware */,
+				599ADD311DC7C785000D85FD /* Externals */,
+				599ADD3B1DC7CBD8000D85FD /* convert_firmware */,
+				599ADD261DC7C66B000D85FD /* Products */,
+				590110361DC7E9DF00B5CD8E /* Frameworks */,
+			);
+			sourceTree = "<group>";
+			wrapsLines = 0;
+		};
+		599ADD261DC7C66B000D85FD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				599ADD251DC7C66B000D85FD /* liblibqhy.a */,
+				599ADD3A1DC7CBD8000D85FD /* convert_firmware */,
+				5901102A1DC7E97300B5CD8E /* libqhy_test */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		599ADD311DC7C785000D85FD /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+				599ADD2F1DC7C774000D85FD /* libusb.h */,
+				599ADD301DC7C780000D85FD /* libusb-1.0.a */,
+			);
+			name = Externals;
+			sourceTree = "<group>";
+		};
+		599ADD321DC7C7BC000D85FD /* Firmware */ = {
+			isa = PBXGroup;
+			children = (
+				599ADD341DC7C915000D85FD /* QHY5II.HEX */,
+			);
+			name = Firmware;
+			path = firmware;
+			sourceTree = "<group>";
+		};
+		599ADD3B1DC7CBD8000D85FD /* convert_firmware */ = {
+			isa = PBXGroup;
+			children = (
+				599ADD3C1DC7CBD8000D85FD /* main.c */,
+			);
+			path = convert_firmware;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		599ADD231DC7C66B000D85FD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5901103E1DC8AAED00B5CD8E /* libqhy_base.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		590110291DC7E97300B5CD8E /* libqhy_test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5901102E1DC7E97400B5CD8E /* Build configuration list for PBXNativeTarget "libqhy_test" */;
+			buildPhases = (
+				590110261DC7E97300B5CD8E /* Sources */,
+				590110271DC7E97300B5CD8E /* Frameworks */,
+				590110281DC7E97300B5CD8E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				590110321DC7E97F00B5CD8E /* PBXTargetDependency */,
+			);
+			name = libqhy_test;
+			productName = qhy_test;
+			productReference = 5901102A1DC7E97300B5CD8E /* libqhy_test */;
+			productType = "com.apple.product-type.tool";
+		};
+		599ADD241DC7C66B000D85FD /* libqhy */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 599ADD291DC7C66B000D85FD /* Build configuration list for PBXNativeTarget "libqhy" */;
+			buildPhases = (
+				599ADD211DC7C66B000D85FD /* Sources */,
+				599ADD221DC7C66B000D85FD /* Frameworks */,
+				599ADD231DC7C66B000D85FD /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libqhy;
+			productName = libqhy;
+			productReference = 599ADD251DC7C66B000D85FD /* liblibqhy.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		599ADD391DC7CBD8000D85FD /* convert_firmware */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 599ADD3E1DC7CBD8000D85FD /* Build configuration list for PBXNativeTarget "convert_firmware" */;
+			buildPhases = (
+				599ADD361DC7CBD8000D85FD /* Sources */,
+				599ADD371DC7CBD8000D85FD /* Frameworks */,
+				599ADD381DC7CBD8000D85FD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = convert_firmware;
+			productName = convert_firmware;
+			productReference = 599ADD3A1DC7CBD8000D85FD /* convert_firmware */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		599ADD1D1DC7C66B000D85FD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0810;
+				ORGANIZATIONNAME = "CloudMakers, s. r. o.";
+				TargetAttributes = {
+					590110291DC7E97300B5CD8E = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = AG8BXW65A2;
+						ProvisioningStyle = Automatic;
+					};
+					599ADD241DC7C66B000D85FD = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = AG8BXW65A2;
+						ProvisioningStyle = Automatic;
+					};
+					599ADD391DC7CBD8000D85FD = {
+						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = AG8BXW65A2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 599ADD201DC7C66B000D85FD /* Build configuration list for PBXProject "libqhy" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 599ADD1C1DC7C66B000D85FD;
+			productRefGroup = 599ADD261DC7C66B000D85FD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				599ADD241DC7C66B000D85FD /* libqhy */,
+				599ADD391DC7CBD8000D85FD /* convert_firmware */,
+				590110291DC7E97300B5CD8E /* libqhy_test */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		590110261DC7E97300B5CD8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				590110331DC7E98500B5CD8E /* libqhy_test.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		599ADD211DC7C66B000D85FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5901103C1DC8A92200B5CD8E /* libqhy_5ii_firmware.c in Sources */,
+				590112A01DC9438300B5CD8E /* libqhy_5ii.c in Sources */,
+				599ADD431DC7D946000D85FD /* libqhy.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		599ADD361DC7CBD8000D85FD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				599ADD3D1DC7CBD8000D85FD /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		590110321DC7E97F00B5CD8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 599ADD241DC7C66B000D85FD /* libqhy */;
+			targetProxy = 590110311DC7E97F00B5CD8E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5901102F1DC7E97400B5CD8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib/macOS",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		590110301DC7E97400B5CD8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib/macOS",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		599ADD271DC7C66B000D85FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = include;
+				LIBRARY_SEARCH_PATHS = lib/macOS;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		599ADD281DC7C66B000D85FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = include;
+				LIBRARY_SEARCH_PATHS = lib/macOS;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		599ADD2A1DC7C66B000D85FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		599ADD2B1DC7C66B000D85FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		599ADD3F1DC7CBD8000D85FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		599ADD401DC7CBD8000D85FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = AG8BXW65A2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5901102E1DC7E97400B5CD8E /* Build configuration list for PBXNativeTarget "libqhy_test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5901102F1DC7E97400B5CD8E /* Debug */,
+				590110301DC7E97400B5CD8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		599ADD201DC7C66B000D85FD /* Build configuration list for PBXProject "libqhy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599ADD271DC7C66B000D85FD /* Debug */,
+				599ADD281DC7C66B000D85FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		599ADD291DC7C66B000D85FD /* Build configuration list for PBXNativeTarget "libqhy" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599ADD2A1DC7C66B000D85FD /* Debug */,
+				599ADD2B1DC7C66B000D85FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		599ADD3E1DC7CBD8000D85FD /* Build configuration list for PBXNativeTarget "convert_firmware" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599ADD3F1DC7CBD8000D85FD /* Debug */,
+				599ADD401DC7CBD8000D85FD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 599ADD1D1DC7C66B000D85FD /* Project object */;
+}
