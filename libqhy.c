@@ -133,14 +133,14 @@ int libqhy_i2c_write(libusb_device_handle *handle, unsigned addr,unsigned short 
   data[0] = (value & 0xff00) >> 8;
   data[1] = value & 0x00FF;
   int rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xbb, 0, addr, data, 2, 0);
-  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   return rc;
 }
 
 int libqhy_i2c_read(libusb_device_handle *handle, unsigned addr, unsigned short *value) {
   unsigned char data[2];
   int rc = libusb_control_transfer(handle, REQUEST_READ, 0xb7, 0, addr, data, 2, 0);
-  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   if (rc >= 0)
     *value = data[0] * 256 + data[1];
   return rc;
