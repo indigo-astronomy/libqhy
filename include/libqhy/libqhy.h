@@ -25,7 +25,7 @@
 #include <libusb-1.0/libusb.h>
 
 #define QHY_VID1	0x16C0
-#define QHY_VID2 0x1618
+#define QHY_VID2	0x1618
 
 typedef enum {
   QHY_UNINITIALIZED = 0,
@@ -37,36 +37,26 @@ typedef enum {
   QHY_5HII
 } libqhy_camera_type;
 
-typedef struct {
-	libqhy_camera_type type;
-	libusb_device_handle *handle;
-  pthread_mutex_t lock;
-  int usb_speed;
-  int usb_traffic;
-  bool stream_mode;
-  bool long_time_mode;
-  double exposure_time;
-  int offset;
-  bool is_colour;
-  bool has_cooler, has_guider_port;
-  int bits_per_pixel;
-  int width, height;
-	double pixel_width, pixel_height;
-	int max_bin_hor, max_bin_vert;
-  int frame_left, frame_top, frame_width, frame_height, frame_bits_per_pixel;
-  unsigned short reg300c;
-	pthread_mutex_t usb_mutex;
-} libqhy_device_context;
+typedef struct libqhy_device_context libqhy_device_context;
 
 extern bool libqhy_camera(libusb_device *device, libqhy_camera_type *type, const char **name, bool *is_guider);
+
 extern bool libqhy_open(libusb_device *device, libqhy_device_context **context);
 extern bool libqhy_reset(libqhy_device_context *context);
-extern bool libqhy_start_exposure(libqhy_device_context *context, double exposure);
-extern bool libqhy_abort_exposure(libqhy_device_context *context);
+
+extern bool libqhy_get_handle(libqhy_device_context *context, libusb_device_handle **handle);
+extern bool libqhy_get_resolution(libqhy_device_context *context, unsigned *width, unsigned *height, unsigned *bits_per_pixel);
+extern bool libqhy_get_pixel_size(libqhy_device_context *context, double *width, double *height);
+extern bool libqhy_get_temperature(libqhy_device_context *context, double *temperature);
+
+extern bool libqhy_set_exposure_time(libqhy_device_context *context, double exposure);
+
+extern bool libqhy_start(libqhy_device_context *context);
 extern bool libqhy_read_pixels(libqhy_device_context *context, unsigned short *image);
-extern bool libqhy_set_cooler(libqhy_device_context *context, bool status, double temperature);
-extern bool libqhy_check_temperature(libqhy_device_context *context, double *temperature);
-extern bool libqhy_guide_relays(libqhy_device_context *device_context, unsigned short mask);
+extern bool libqhy_stop(libqhy_device_context *context);
+
+extern bool libqhy_set_guide_relays(libqhy_device_context *device_context, unsigned short mask);
+
 extern void libqhy_close(libqhy_device_context *context);
 
 extern bool libqhy_debug_level;

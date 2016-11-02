@@ -417,6 +417,47 @@ static int init_cmos(libqhy_device_context *context) {
   return rc;
 }
 
+static int set_ppl(libqhy_device_context *context) {
+	libusb_device_handle *handle = context->handle;
+	int rc = 0;
+	switch (context->type) {
+		case QHY_5LII:
+			// set pll
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302A, 14);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302C, 1);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302E, 3);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 42);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
+			if (context->stream_mode) {
+				if (context->long_time_mode)
+					rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
+				else
+					rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x1330);
+			} else {
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
+			}
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305e, 0x0020);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0xD208);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3064, 0x1802);
+			break;
+		case QHY_5HII:
+			// set pll
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302A, 14);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302C, 1);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302E, 3);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 42);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x0020);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305e, 0x0020);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0xD208);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3064, 0x1802);
+			break;
+		default:
+			break;
+	}
+	return rc;
+}
+
 static int set_resolution(libqhy_device_context *context) {
   libusb_device_handle *handle = context->handle;
   int rc = 0;
@@ -435,24 +476,7 @@ static int set_resolution(libqhy_device_context *context) {
     case QHY_5PII:
       break;
     case QHY_5LII:
-      // set pll
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302A, 14);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302C, 1);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302E, 3);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 42);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
-      if (context->stream_mode) {
-        if (context->long_time_mode)
-          rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
-        else
-          rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x1330);
-      } else {
-        rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
-      }
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305e, 0x0020);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0xD208);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3064, 0x1802);
-      // set resolution
+			rc = rc < 0 ? rc : set_ppl(context);
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3002, 4); // y start
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3004, 4); // x start
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3006, 4 + 960 - 1); // y end
@@ -479,17 +503,7 @@ static int set_resolution(libqhy_device_context *context) {
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x301A,0x10d4);
       break;
     case QHY_5HII:
-      // set pll
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302A, 14);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302C, 1);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302E, 3);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 42);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x0020);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305e, 0x0020);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0xD208);
-      rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3064, 0x1802);
-      // set resolution
+			rc = rc < 0 ? rc : set_ppl(context);
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3002, 4); // y start
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3004, 4); // x start
       rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3006, 4 + 960 - 1); // y end
@@ -952,15 +966,44 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
   return rc >= 0;
 }
 
-bool libqhy_5ii_start_exposure(libqhy_device_context *context, double exposure) {
+bool libqhy_5ii_get_temperature(libqhy_device_context *context, double *temperature) {
+	unsigned short sensed = 0, calib1 = 0, calib2 = 0;
+	libusb_device_handle *handle = context->handle;
+	pthread_mutex_lock(&context->usb_mutex);
+	int rc = libqhy_i2c_write(handle, 0x30B4, 0x0011);
+	rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C6, &calib1);
+	rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C8, &calib2);
+	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B4, 0x0000);
+	rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30B2, &sensed);
+	pthread_mutex_unlock(&context->usb_mutex);
+	if (rc >= 0) {
+		double slope = (70.0 - 55.0)/(calib1 - calib2);
+		double T0 = (slope * calib1 - 70.0);
+		*temperature = slope * sensed - T0;
+		QHY_DEBUG(qhy_log("*** temperature %g", *temperature));
+		QHY_DEBUG(qhy_log("QHY5II check temperature -> OK"));
+		return true;
+	}
+	QHY_DEBUG(qhy_log("QHY5II check temperature -> Failed"));
+	return false;
+}
+
+bool libqhy_5ii_set_exposure_time(libqhy_device_context *context, double exposure) {
+	pthread_mutex_lock(&context->usb_mutex);
+	set_exposure_time(context, context->exposure_time = exposure);
+	pthread_mutex_unlock(&context->usb_mutex);
+	return true;
+}
+
+bool libqhy_5ii_start(libqhy_device_context *context) {
   unsigned char data[1] = { 100 };
   libusb_device_handle *handle = context->handle;
+	assert(handle != NULL);
 	pthread_mutex_lock(&context->usb_mutex);
-  set_exposure_time(context, context->exposure_time = exposure);
   int rc = libusb_control_transfer(handle, REQUEST_WRITE,  0xb3, 0, 0, data, 1, 2000);
 	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
 	pthread_mutex_unlock(&context->usb_mutex);
-  return true;
+	return rc >= 0;
 }
 
 bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *image) {
@@ -1004,32 +1047,15 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
       continue;
     }
   }
-  unsigned char data[4] = { 0, 0, 0, 0 };
-	pthread_mutex_lock(&context->usb_mutex);
-  rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xC1, 0, 0, data, 4, 2000);
-	pthread_mutex_unlock(&context->usb_mutex);
-  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   return rc >= 0;
 }
 
-bool libqhy_5ii_check_temperature(libqhy_device_context *context, double *temperature) {
-  unsigned short sensed = 0, calib1 = 0, calib2 = 0;
-  libusb_device_handle *handle = context->handle;
+bool libqhy_5ii_stop(libqhy_device_context *context) {
+	unsigned char data[4] = { 0, 0, 0, 0 };
+	libusb_device_handle *handle = context->handle;
 	pthread_mutex_lock(&context->usb_mutex);
-  int rc = libqhy_i2c_write(handle, 0x30B4, 0x0011);
-  rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C6, &calib1);
-  rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C8, &calib2);
-  rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B4, 0x0000);
-  rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30B2, &sensed);
+	int rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xC1, 0, 0, data, 4, 2000);
 	pthread_mutex_unlock(&context->usb_mutex);
-  if (rc >= 0) {
-    double slope = (70.0 - 55.0)/(calib1 - calib2);
-    double T0 = (slope * calib1 - 70.0);
-    *temperature = slope * sensed - T0;
-    QHY_DEBUG(qhy_log("*** temperature %g", *temperature));
-    QHY_DEBUG(qhy_log("QHY5II check temperature -> OK"));
-    return true;
-  }
-  QHY_DEBUG(qhy_log("QHY5II check temperature -> Failed"));
-  return false;
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	return rc >= 0;
 }

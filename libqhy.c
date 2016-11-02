@@ -228,58 +228,82 @@ bool libqhy_camera(libusb_device *device, libqhy_camera_type *type, const char *
 }
 
 bool libqhy_open(libusb_device *device, libqhy_device_context **device_context) {
-  libqhy_camera_type type;
-  libqhy_camera(device, &type, NULL, NULL);
-  libusb_device_handle *handle = NULL;
-  int rc = libusb_open(device, &handle);
-  QHY_DEBUG(qhy_log("libusb_open [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-  if (rc >= 0) {
-    if (libusb_has_capability(LIBUSB_CAP_SUPPORTS_DETACH_KERNEL_DRIVER)) {
-      if (libusb_kernel_driver_active(handle, 0) == 1) {
-        rc = libusb_detach_kernel_driver(handle, 0);
-        QHY_DEBUG(qhy_log("libusb_detach_kernel_driver [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-      }
-    }
-  }
-  if (rc >= 0) {
-    rc = libusb_set_configuration(handle, 1);
-    QHY_DEBUG(qhy_log("libusb_set_configuration [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-  }
-  if (rc >= 0) {
-    rc = libusb_claim_interface(handle, 0);
-    QHY_DEBUG(qhy_log("libusb_claim_interface [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-  }
-  if (rc >= 0) {
-    libqhy_device_context *context = malloc(sizeof(libqhy_device_context));
-    memset(context, 0, sizeof(libqhy_device_context));
-    context->handle = handle;
-    context->type = type;
-    pthread_mutex_init(&context->lock, NULL);
-    bool initialized = false;
-    switch (type) {
-      case  QHY_5II:
-        initialized = libqhy_5ii_init(context);
-      default:
-        break;
-      }
-      if (initialized) {
-        QHY_DEBUG(qhy_log("*** pixel count: %d x %d", context->width, context->height));
-        QHY_DEBUG(qhy_log("*** pixel size: %3.2f x %3.2f", context->pixel_width, context->pixel_height));
-        QHY_DEBUG(qhy_log("*** max bin: %d x %d", context->max_bin_hor, context->max_bin_vert));
-        QHY_DEBUG(qhy_log("*** has guider port: %s", context->has_guider_port ? "true" : "false"));
-        QHY_DEBUG(qhy_log("*** has cooler: %s", context->has_cooler ? "true" : "false"));
-        QHY_DEBUG(qhy_log("*** is colour: %s", context->is_colour ? "true" : "false"));
-				pthread_mutex_init(&context->usb_mutex, NULL);
-        *device_context = context;
-        QHY_DEBUG(qhy_log("QHY open -> OK"));
-      } else {
-        free (context);
-      }
-    }
-    return rc >= 0;
-  }
+	libqhy_camera_type type;
+	libqhy_camera(device, &type, NULL, NULL);
+	libusb_device_handle *handle = NULL;
+	int rc = libusb_open(device, &handle);
+	QHY_DEBUG(qhy_log("libusb_open [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	if (rc >= 0) {
+		if (libusb_has_capability(LIBUSB_CAP_SUPPORTS_DETACH_KERNEL_DRIVER)) {
+			if (libusb_kernel_driver_active(handle, 0) == 1) {
+				rc = libusb_detach_kernel_driver(handle, 0);
+				QHY_DEBUG(qhy_log("libusb_detach_kernel_driver [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+			}
+		}
+	}
+	if (rc >= 0) {
+		rc = libusb_set_configuration(handle, 1);
+		QHY_DEBUG(qhy_log("libusb_set_configuration [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	}
+	if (rc >= 0) {
+		rc = libusb_claim_interface(handle, 0);
+		QHY_DEBUG(qhy_log("libusb_claim_interface [%d] ->  %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	}
+	if (rc >= 0) {
+		libqhy_device_context *context = malloc(sizeof(libqhy_device_context));
+		memset(context, 0, sizeof(libqhy_device_context));
+		context->handle = handle;
+		context->type = type;
+		pthread_mutex_init(&context->lock, NULL);
+		bool initialized = false;
+		switch (type) {
+			case  QHY_5II:
+				initialized = libqhy_5ii_init(context);
+			default:
+				break;
+		}
+		if (initialized) {
+			QHY_DEBUG(qhy_log("*** pixel count: %d x %d", context->width, context->height));
+			QHY_DEBUG(qhy_log("*** pixel size: %3.2f x %3.2f", context->pixel_width, context->pixel_height));
+			QHY_DEBUG(qhy_log("*** max bin: %d x %d", context->max_bin_hor, context->max_bin_vert));
+			QHY_DEBUG(qhy_log("*** has guider port: %s", context->has_guider_port ? "true" : "false"));
+			QHY_DEBUG(qhy_log("*** has cooler: %s", context->has_cooler ? "true" : "false"));
+			QHY_DEBUG(qhy_log("*** is colour: %s", context->is_colour ? "true" : "false"));
+			pthread_mutex_init(&context->usb_mutex, NULL);
+			*device_context = context;
+			QHY_DEBUG(qhy_log("QHY open -> OK"));
+		} else {
+			free (context);
+		}
+	}
+	return rc >= 0;
+}
 
-bool libqhy_check_temperature(libqhy_device_context *context, double *temperature) {
+bool libqhy_get_handle(libqhy_device_context *context, libusb_device_handle **handle) {
+	assert(handle != NULL);
+	*handle = context->handle;
+	return context->handle != NULL;
+}
+
+bool libqhy_get_resolution(libqhy_device_context *context, unsigned *width, unsigned *height, unsigned *bits_per_pixel) {
+	assert(width != NULL);
+	assert(height != NULL);
+	assert(bits_per_pixel != NULL);
+	*width = context->width;
+	*height = context->height;
+	*bits_per_pixel = context->bits_per_pixel;
+	return context->handle != NULL;
+}
+
+bool libqhy_get_pixel_size(libqhy_device_context *context, double *width, double *height) {
+	assert(width != NULL);
+	assert(height != NULL);
+	*width = context->pixel_width;
+	*height = context->pixel_height;
+	return context->handle != NULL;
+}
+
+bool libqhy_get_temperature(libqhy_device_context *context, double *temperature) {
   switch (context->type) {
     case QHY_5II:
     case QHY_5TII:
@@ -287,7 +311,7 @@ bool libqhy_check_temperature(libqhy_device_context *context, double *temperatur
     case  QHY_5LII:
     case  QHY_5RII:
     case  QHY_5HII:
-      return libqhy_5ii_check_temperature(context, temperature);
+      return libqhy_5ii_get_temperature(context, temperature);
     default:
       break;
   }
@@ -295,7 +319,25 @@ bool libqhy_check_temperature(libqhy_device_context *context, double *temperatur
   return false;
 }
 
-bool libqhy_start_exposure(libqhy_device_context *context, double exposure) {
+bool libqhy_set_exposure_time(libqhy_device_context *context, double exposure) {
+	switch (context->type) {
+		case QHY_5II:
+		case QHY_5TII:
+		case  QHY_5PII:
+		case  QHY_5LII:
+		case  QHY_5RII:
+		case  QHY_5HII:
+			return libqhy_5ii_set_exposure_time(context, 1000*exposure);
+		default:
+			break;
+	}
+	QHY_DEBUG(qhy_log("QHY start exposure -> Failed"));
+	return false;
+}
+
+
+
+bool libqhy_start(libqhy_device_context *context) {
   switch (context->type) {
     case QHY_5II:
     case QHY_5TII:
@@ -303,7 +345,7 @@ bool libqhy_start_exposure(libqhy_device_context *context, double exposure) {
     case  QHY_5LII:
     case  QHY_5RII:
     case  QHY_5HII:
-      return libqhy_5ii_start_exposure(context, 1000*exposure);
+      return libqhy_5ii_start(context);
     default:
       break;
   }
@@ -325,6 +367,22 @@ bool libqhy_read_pixels(libqhy_device_context *context, unsigned short *image) {
   }
   QHY_DEBUG(qhy_log("QHY read pixels -> Failed"));
   return false;
+}
+
+bool libqhy_stop(libqhy_device_context *context) {
+	switch (context->type) {
+		case QHY_5II:
+		case QHY_5TII:
+		case  QHY_5PII:
+		case  QHY_5LII:
+		case  QHY_5RII:
+		case  QHY_5HII:
+			return libqhy_5ii_stop(context);
+		default:
+			break;
+	}
+	QHY_DEBUG(qhy_log("QHY start exposure -> Failed"));
+	return false;
 }
 
 void libqhy_close(libqhy_device_context *device_context) {

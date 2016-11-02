@@ -19,6 +19,8 @@
 #ifndef libqhy_base_h
 #define libqhy_base_h
 
+#include <assert.h>
+
 #include <libusb-1.0/libusb.h>
 
 #define QHY_DEBUG(c) c
@@ -31,6 +33,27 @@ enum USB_REQUEST {
   USB_RQ_LOAD_FIRMWARE      = 0xa0,
   USB_RQ_WRITE_SMALL_EEPROM = 0xa2
 };
+
+typedef struct libqhy_device_context {
+	libqhy_camera_type type;
+	libusb_device_handle *handle;
+	pthread_mutex_t lock;
+	int usb_speed;
+	int usb_traffic;
+	bool stream_mode;
+	bool long_time_mode;
+	double exposure_time;
+	int offset;
+	bool is_colour;
+	bool has_cooler, has_guider_port;
+	int bits_per_pixel;
+	int width, height;
+	double pixel_width, pixel_height;
+	int max_bin_hor, max_bin_vert;
+	int frame_left, frame_top, frame_width, frame_height, frame_bits_per_pixel;
+	unsigned short reg300c;
+	pthread_mutex_t usb_mutex;
+} libqhy_device_context;
 
 enum request_type { REQUEST_READ = 0xC0, REQUEST_WRITE = 0x40 };
 enum endpoint_type { INTERRUPT_READ_ENDPOINT = 0x81, INTERRUPT_WRITE_ENDPOINT = 0x01, DATA_READ_ENDPOINT = 0x82 };
