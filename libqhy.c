@@ -104,27 +104,27 @@ void qhy_log(const char *format, ...) {
 
 //static bool qhy_control_write(libusb_device_handle *handle, unsigned req, unsigned char* data, unsigned length) {
 //  int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_WRITE, req, 0, 0, data, length, 0);
-//  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+//  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
 //  return rc >= 0;
 //}
 //
 //static bool qhy_control_read(libusb_device_handle *handle, unsigned req, unsigned char* data, unsigned length) {
 //  int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_READ, req, 0, 0, data, length, 0);
-//  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+//  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
 //  return rc >= 0;
 //}
 //
 //static bool qhy_write(libusb_device_handle *handle, unsigned char *data, unsigned length) {
 //  int length_transfered;
 //  int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_WRITE_ENDPOINT, data, length, &length_transfered, 0);
-//  QHY_DEBUG(qhy_log("libusb_bulk_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+//  QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
 //  return rc >= 0;
 //}
 //
 //static bool qhy_read(libusb_device_handle *handle, unsigned char *data, unsigned length) {
 //  int length_transfered;
 //  int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_READ_ENDPOINT, data, length, &length_transfered, 0);
-//  QHY_DEBUG(qhy_log("libusb_bulk_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+//  QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
 //  return rc >= 0;
 //}
 
@@ -133,24 +133,30 @@ int libqhy_i2c_write(libusb_device_handle *handle, unsigned addr,unsigned short 
   data[0] = (value & 0xff00) >> 8;
   data[1] = value & 0x00FF;
   int rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xbb, 0, addr, data, 2, 0);
-  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   return rc;
 }
 
 int libqhy_i2c_read(libusb_device_handle *handle, unsigned addr, unsigned short *value) {
   unsigned char data[2];
   int rc = libusb_control_transfer(handle, REQUEST_READ, 0xb7, 0, addr, data, 2, 0);
-  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s\n", rc < 0 ? libusb_error_name(rc) : "OK" ));
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   if (rc >= 0)
     *value = data[0] * 256 + data[1];
   return rc;
 }
 
-static void qhy_firmware(libusb_device *device, const unsigned char *data) {
+typedef struct {
+	libusb_device *device;
+	const unsigned char *data;
+} firmware_context;
+
+static void *qhy_firmware(firmware_context *context) {
   unsigned char stop = 1;
   unsigned char reset = 0;
   libusb_device_handle *handle;
-  int rc = libusb_open(device, &handle);
+	const unsigned char *data = context->data;
+  int rc = libusb_open(context->device, &handle);
   QHY_DEBUG(qhy_log("libusb_open [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   if (libusb_has_capability(LIBUSB_CAP_SUPPORTS_DETACH_KERNEL_DRIVER)) {
     if (libusb_kernel_driver_active(handle, 0) == 1) {
@@ -184,6 +190,9 @@ static void qhy_firmware(libusb_device *device, const unsigned char *data) {
     libusb_close(handle);
     QHY_DEBUG(qhy_log("libusb_close [%d]", __LINE__));
   }
+	libusb_unref_device(context->device);
+	free(context);
+	return NULL;
 }
 
 bool libqhy_camera(libusb_device *device, libqhy_camera_type *type, const char **name, bool *is_guider) {
@@ -197,7 +206,11 @@ bool libqhy_camera(libusb_device *device, libqhy_camera_type *type, const char *
     if (descriptor.idVendor == qhy_cameras[i].vid && qhy_cameras[i].pid == descriptor.idProduct) {
       if (qhy_cameras[i].type == QHY_UNINITIALIZED) {
         QHY_DEBUG(qhy_log("*** type: %s", qhy_cameras[i].name));
-        qhy_firmware(device, qhy_cameras[i].firmware);
+				firmware_context *context = malloc(sizeof(firmware_context));
+				libusb_ref_device(context->device = device);
+				context->data = qhy_cameras[i].firmware;
+				pthread_t async_thread;
+				pthread_create(&async_thread, NULL, (void *)(void *)qhy_firmware, context);
         return false;
       } else {
         if (type)
@@ -256,6 +269,7 @@ bool libqhy_open(libusb_device *device, libqhy_device_context **device_context) 
         QHY_DEBUG(qhy_log("*** has guider port: %s", context->has_guider_port ? "true" : "false"));
         QHY_DEBUG(qhy_log("*** has cooler: %s", context->has_cooler ? "true" : "false"));
         QHY_DEBUG(qhy_log("*** is colour: %s", context->is_colour ? "true" : "false"));
+				pthread_mutex_init(&context->usb_mutex, NULL);
         *device_context = context;
         QHY_DEBUG(qhy_log("QHY open -> OK"));
       } else {
@@ -289,7 +303,7 @@ bool libqhy_start_exposure(libqhy_device_context *context, double exposure) {
     case  QHY_5LII:
     case  QHY_5RII:
     case  QHY_5HII:
-      return libqhy_5ii_start_exposure(context, exposure);
+      return libqhy_5ii_start_exposure(context, 1000*exposure);
     default:
       break;
   }

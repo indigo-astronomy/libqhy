@@ -55,6 +55,7 @@ typedef struct {
 	int max_bin_hor, max_bin_vert;
   int frame_left, frame_top, frame_width, frame_height, frame_bits_per_pixel;
   unsigned short reg300c;
+	pthread_mutex_t usb_mutex;
 } libqhy_device_context;
 
 extern bool libqhy_camera(libusb_device *device, libqhy_camera_type *type, const char **name, bool *is_guider);

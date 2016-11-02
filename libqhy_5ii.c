@@ -941,7 +941,7 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
     context->frame_top = context->frame_left = 0;
     context->frame_width = context->width;
     context->frame_height = context->height;
-    context->frame_bits_per_pixel = 8;
+		context->frame_bits_per_pixel = 8; //context->bits_per_pixel;
     rc = rc < 0 ? rc : set_usb_speed(context);
     rc = rc < 0 ? rc : init_cmos(context);
     rc = rc < 0 ? rc : set_resolution(context);
@@ -955,9 +955,11 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
 bool libqhy_5ii_start_exposure(libqhy_device_context *context, double exposure) {
   unsigned char data[1] = { 100 };
   libusb_device_handle *handle = context->handle;
+	pthread_mutex_lock(&context->usb_mutex);
   set_exposure_time(context, context->exposure_time = exposure);
   int rc = libusb_control_transfer(handle, REQUEST_WRITE,  0xb3, 0, 0, data, 1, 2000);
-  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	pthread_mutex_unlock(&context->usb_mutex);
   return true;
 }
 
@@ -988,7 +990,7 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
     if (remaining && sentinel_found) {
       curent_position = 0;
       remaining = context->frame_width * context->frame_height + 5;
-      QHY_DEBUG(qhy_log("QHY5II read pixels - misaligned frame"));
+      QHY_DEBUG(qhy_log("QHY5II read pixels - misaligned frame, skipping"));
       continue;
     }
     if (remaining <= 0 && sentinel_found == NULL) {
@@ -1003,7 +1005,9 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
     }
   }
   unsigned char data[4] = { 0, 0, 0, 0 };
+	pthread_mutex_lock(&context->usb_mutex);
   rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xC1, 0, 0, data, 4, 2000);
+	pthread_mutex_unlock(&context->usb_mutex);
   QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
   return rc >= 0;
 }
@@ -1011,11 +1015,13 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
 bool libqhy_5ii_check_temperature(libqhy_device_context *context, double *temperature) {
   unsigned short sensed = 0, calib1 = 0, calib2 = 0;
   libusb_device_handle *handle = context->handle;
+	pthread_mutex_lock(&context->usb_mutex);
   int rc = libqhy_i2c_write(handle, 0x30B4, 0x0011);
   rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C6, &calib1);
   rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30C8, &calib2);
   rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B4, 0x0000);
   rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x30B2, &sensed);
+	pthread_mutex_unlock(&context->usb_mutex);
   if (rc >= 0) {
     double slope = (70.0 - 55.0)/(calib1 - calib2);
     double T0 = (slope * calib1 - 70.0);
