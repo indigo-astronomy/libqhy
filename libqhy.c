@@ -291,7 +291,7 @@ bool libqhy_get_resolution(libqhy_device_context *context, unsigned *width, unsi
 	assert(bits_per_pixel != NULL);
 	*width = context->width;
 	*height = context->height;
-	*bits_per_pixel = context->bits_per_pixel;
+	*bits_per_pixel = context->frame_bits_per_pixel;
 	return context->handle != NULL;
 }
 
@@ -327,7 +327,7 @@ bool libqhy_set_exposure_time(libqhy_device_context *context, double exposure) {
 		case  QHY_5LII:
 		case  QHY_5RII:
 		case  QHY_5HII:
-			return libqhy_5ii_set_exposure_time(context, 1000*exposure);
+			return libqhy_5ii_set_exposure_time(context, exposure);
 		default:
 			break;
 	}
@@ -335,7 +335,21 @@ bool libqhy_set_exposure_time(libqhy_device_context *context, double exposure) {
 	return false;
 }
 
-
+bool libqhy_set_gain(libqhy_device_context *context, double gain) {
+	switch (context->type) {
+		case QHY_5II:
+		case QHY_5TII:
+		case  QHY_5PII:
+		case  QHY_5LII:
+		case  QHY_5RII:
+		case  QHY_5HII:
+			return libqhy_5ii_set_gain(context, gain);
+		default:
+			break;
+	}
+	QHY_DEBUG(qhy_log("QHY start exposure -> Failed"));
+	return false;
+}
 
 bool libqhy_start(libqhy_device_context *context) {
   switch (context->type) {

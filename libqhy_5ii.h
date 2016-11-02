@@ -25,6 +25,7 @@ extern bool libqhy_5ii_init(libqhy_device_context *context);
 
 extern bool libqhy_5ii_get_temperature(libqhy_device_context *context, double *temperature);
 extern bool libqhy_5ii_set_exposure_time(libqhy_device_context *context, double exposure);
+extern bool libqhy_5ii_set_gain(libqhy_device_context *context, double gain);
 
 extern bool libqhy_5ii_start(libqhy_device_context *context);
 extern bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *image);

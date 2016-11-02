@@ -43,6 +43,7 @@ typedef struct libqhy_device_context {
 	bool stream_mode;
 	bool long_time_mode;
 	double exposure_time;
+	double gain;
 	int offset;
 	bool is_colour;
 	bool has_cooler, has_guider_port;

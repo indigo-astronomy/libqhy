@@ -21,6 +21,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 
 #include <libqhy/libqhy.h>
 
@@ -836,6 +837,135 @@ static int set_offset(libqhy_device_context *context) {
   return rc;
 }
 
+static int set_gain(libqhy_device_context *context) {
+  libusb_device_handle *handle = context->handle;
+  int rc = 0;
+  switch (context->type) {
+    case QHY_5II:
+			break;
+		case QHY_5TII:
+			break;
+		case QHY_5PII:
+			break;
+		case QHY_5LII: {
+			set_exposure_time(context, 1000);
+			double gain = 1.0348 + context->gain * 38.7652 / 100;
+			uint16_t REG30B0;
+			if (context->stream_mode) {
+				if (context->long_time_mode)
+					REG30B0 = 0x5330;
+				else
+					REG30B0 = 0x1330;
+			} else {
+				REG30B0 = 0x5330;
+			}
+			uint16_t baseDGain;
+			double C[8] = {10, 8, 5, 4, 2.5, 2, 1.25, 1};
+			double S[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+			uint32_t A[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+			uint32_t B[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+			double Error[8];
+			for (uint32_t i = 0; i < 8; i++) {
+				S[i] = gain / C[i];
+				A[i] = (uint32_t)S[i];
+				B[i] = (S[i] - A[i]) / 0.03125;
+				if (A[i] > 3)
+					A[i] = 10000;
+				if (A[i] == 0)
+					A[i] = 10000;
+				Error[i] = fabs((A[i]+B[i] * 0.03125) * C[i] - gain);
+			}
+			
+			double minValue;
+			uint32_t minValuePosition;
+			
+			minValue = Error[0];
+			minValuePosition = 0;
+			
+			for (uint32_t i = 0; i < 8; i++) {
+				if (minValue > Error[i]) {
+					minValue = Error[i];
+					minValuePosition = i;
+				}
+			}
+			uint32_t AA = 0, BB = 0, CC = 0;
+			double DD = 0;
+			double EE = 0;
+			double r2g, b2g;
+			
+			AA = A[minValuePosition];
+			BB = B[minValuePosition];
+			if (minValuePosition == 0) {
+				CC = 8;
+				DD = 1.25;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x30);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD308);
+			} else if (minValuePosition == 1) {
+				CC = 8;
+				DD = 1;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x30);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD208);
+			} else if (minValuePosition == 2) {
+				CC = 4;
+				DD = 1.25;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x20);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD308);
+			} else if (minValuePosition == 3) {
+				CC = 4;
+				DD = 1;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x20);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD208);
+			} else if (minValuePosition == 4) {
+				CC = 2;
+				DD = 1.25;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x10);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD308);
+			} else if (minValuePosition == 5) {
+				CC = 2;
+				DD = 1;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x10);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD208);
+			} else if (minValuePosition == 6) {
+				CC = 1;
+				DD = 1.25;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x00);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD308);
+			} else if (minValuePosition == 7) {
+				CC = 1;
+				DD = 1;
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, (REG30B0 &~0x0030) + 0x00);
+				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3EE4, 0XD208);
+			}
+			
+			EE = fabs((AA+BB * 0.03125) * CC * DD - gain);
+			
+			baseDGain = BB + AA * 32;
+			
+			r2g = 1; //(camred2green + 50) / 100.0;
+			b2g = 1; //(camblue2green + 50) / 100.0;
+			
+//			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3058, baseDGain * b2g);
+//			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305a, baseDGain * r2g);
+//			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305c, baseDGain);
+//			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3056, baseDGain);
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x305E, baseDGain);
+			
+			usleep(10000);
+			
+			set_exposure_time(context, context->exposure_time);
+		}
+			break;
+		case QHY_5RII:
+			break;
+		case QHY_5HII:
+			break;
+		default:
+			break;
+	}
+	return rc;
+}
+
+
 //static int template(libqhy_device_context *context) {
 //  libusb_device_handle *handle = context->handle;
 //  int rc = 0;
@@ -956,12 +1086,14 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
     context->frame_width = context->width;
     context->frame_height = context->height;
 		context->frame_bits_per_pixel = 8; //context->bits_per_pixel;
+		context->gain = 100;
     rc = rc < 0 ? rc : set_usb_speed(context);
     rc = rc < 0 ? rc : init_cmos(context);
     rc = rc < 0 ? rc : set_resolution(context);
     rc = rc < 0 ? rc : set_usb_traffic(context);
     rc = rc < 0 ? rc : set_exposure_time(context, context->exposure_time = 20000);
     rc = rc < 0 ? rc : set_offset(context);
+		rc = rc < 0 ? rc : set_gain(context);
   }
   return rc >= 0;
 }
@@ -990,7 +1122,15 @@ bool libqhy_5ii_get_temperature(libqhy_device_context *context, double *temperat
 
 bool libqhy_5ii_set_exposure_time(libqhy_device_context *context, double exposure) {
 	pthread_mutex_lock(&context->usb_mutex);
-	set_exposure_time(context, context->exposure_time = exposure);
+	set_exposure_time(context, context->exposure_time = 1000 * exposure);
+	pthread_mutex_unlock(&context->usb_mutex);
+	return true;
+}
+
+bool libqhy_5ii_set_gain(libqhy_device_context *context, double gain) {
+	pthread_mutex_lock(&context->usb_mutex);
+	context->gain = gain;
+	set_gain(context);
 	pthread_mutex_unlock(&context->usb_mutex);
 	return true;
 }
@@ -1002,6 +1142,7 @@ bool libqhy_5ii_start(libqhy_device_context *context) {
 	pthread_mutex_lock(&context->usb_mutex);
   int rc = libusb_control_transfer(handle, REQUEST_WRITE,  0xb3, 0, 0, data, 1, 2000);
 	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	set_gain(context);
 	pthread_mutex_unlock(&context->usb_mutex);
 	return rc >= 0;
 }
