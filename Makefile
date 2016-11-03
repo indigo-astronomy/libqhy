@@ -69,7 +69,7 @@ init:
 	printf "#define LIBQHY_VERSION \"$(LIBQHY_VERSION)\"\n#define LIBQHY_OS \"$(OS_DETECTED)\"\n#define LIBQHY_ARCH \"$(ARCH_DETECTED)\"\n" >config.h
 	install -d $(dir $(LIBQHY))
 
-$(LIBQHY):	libqhy.o libqhy_5ii.o libqhy_5ii_firmware.o
+$(LIBQHY):	libqhy.o libqhy_5ii.o libqhy_5ii_data.o
 	$(AR) $(ARFLAGS) $@ $^
 
 libqhy_test: libqhy_test.o $(LIBQHY)

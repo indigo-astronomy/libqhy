@@ -289,8 +289,8 @@ bool libqhy_get_resolution(libqhy_device_context *context, unsigned *width, unsi
 	assert(width != NULL);
 	assert(height != NULL);
 	assert(bits_per_pixel != NULL);
-	*width = context->width;
-	*height = context->height;
+	*width = context->frame_width;
+	*height = context->frame_height;
 	*bits_per_pixel = context->frame_bits_per_pixel;
 	return context->handle != NULL;
 }

@@ -51,7 +51,7 @@ typedef struct libqhy_device_context {
 	int width, height;
 	double pixel_width, pixel_height;
 	int max_bin_hor, max_bin_vert;
-	int frame_left, frame_top, frame_width, frame_height, frame_bits_per_pixel;
+	int frame_width, frame_height, frame_bits_per_pixel;
 	unsigned short reg300c;
 	pthread_mutex_t usb_mutex;
 } libqhy_device_context;

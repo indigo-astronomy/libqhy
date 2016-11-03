@@ -20,6 +20,10 @@
 #define libqhy5ii_h
 
 extern unsigned char libqhy_5ii_firmware[];
+extern unsigned short libqhy_5lii_init[][3];
+extern unsigned short libqhy_5rii_init[][3];
+extern unsigned short libqhy_5ii_gain[73];
+extern unsigned short libqhy_5pii_gain[73];
 
 extern bool libqhy_5ii_init(libqhy_device_context *context);
 
