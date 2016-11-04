@@ -795,7 +795,7 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->pixel_height = 3.75;
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
-        context->usb_traffic = 30;
+        context->usb_traffic = 100;
         context->stream_mode = true;
         break;
       case 9:
@@ -906,12 +906,13 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
     rc = libusb_bulk_transfer(handle, DATA_READ_ENDPOINT, buffer + curent_position, remaining, &bytes_transfered, (int)context->exposure_time + 1500);
     QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s (%d)", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK", bytes_transfered));
     if (rc < 0) {
-      if (retry_count > 3) {
-        QHY_DEBUG(qhy_log("QHY5II read pixels -> Failed (retry count > 3)"));
+      if (retry_count > 5) {
+        QHY_DEBUG(qhy_log("QHY5II read pixels -> Failed (retry count > 5)"));
         return false;
       }
+			rc = libusb_clear_halt(handle, DATA_READ_ENDPOINT);
+			QHY_DEBUG(qhy_log("libusb_clear_halt [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
       retry_count++;
-      rc = 0;
       continue;
     }
     curent_position += bytes_transfered;
