@@ -63,12 +63,18 @@ static int set_ppl(libqhy_device_context *context, int ppl) {
 	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302A, 14);
 	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302C, 1);
 	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x302E, 3);
-	if (ppl == 0)
+	context->ppl_ratio = 1;
+	if (ppl == 0) {
 		rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 42);
-	else if (ppl == 1)
+	} else if (ppl == 1) {
 		rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 65);
-	else if (ppl == 2)
+		if (!context->long_time_mode)
+			context->ppl_ratio = 65.0 / 14.0 / 3.0;
+	} else if (ppl == 2) {
 		rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3030, 57);
+		if (!context->long_time_mode)
+			context->ppl_ratio = 57.0 / 14.0 / 3.0;
+	}
 	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
 	if (context->type == QHY_5LII) {
 		if (context->stream_mode) {
@@ -358,7 +364,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         usleep(1000);
         rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x300C, &reg300C);
       }
-      double row_time = reg300C * pixelPeriod;
+      double row_time = reg300C * pixelPeriod / context->ppl_ratio;
       double max_short_exp_time = 65000 * row_time;
       uint32_t exp_time = time;
       if (exp_time > max_short_exp_time) {
@@ -583,6 +589,7 @@ static int set_gain(libqhy_device_context *context, double gain) {
 		case QHY_5LII:
 		case QHY_5HII: {
 			gain = 1.0348 + context->gain * 38.7652 / 100;
+			//gain = 79.6 * context->gain / 100.0;
 			uint16_t reg30B0;
 			if (context->stream_mode) {
 				if (context->long_time_mode)
