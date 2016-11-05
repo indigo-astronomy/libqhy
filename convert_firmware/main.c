@@ -1,9 +1,9 @@
 //
-//  main.c
-//  convert_firmware
+// main.c
+// convert_firmware
 //
-//  Created by Peter Polakovic on 31/10/2016.
-//  Copyright © 2016 CloudMakers, s. r. o. All rights reserved.
+// Created by Peter Polakovic on 31/10/2016.
+// Copyright © 2016 CloudMakers, s. r. o. All rights reserved.
 //
 
 #include <stdio.h>

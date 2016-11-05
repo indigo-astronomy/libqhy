@@ -1,20 +1,20 @@
-//  Copyright (c) 2016 CloudMakers, s. r. o.
-//  All rights reserved.
+// Copyright (c) 2016 CloudMakers, s. r. o.
+// All rights reserved.
 //
-//	You can use this software under the terms of 'INDIGO Astronomy
-//  open-source license' (see LICENSE.md).
+// You can use this software under the terms of 'INDIGO Astronomy
+// open-source license' (see LICENSE.md).
 //
-//	THIS SOFTWARE IS PROVIDED BY THE AUTHORS 'AS IS' AND ANY EXPRESS
-//	OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-//	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-//	ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-//	DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-//	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-//	GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-//	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-//	WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-//	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-//	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// THIS SOFTWARE IS PROVIDED BY THE AUTHORS 'AS IS' AND ANY EXPRESS
+// OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,29 +103,29 @@ void qhy_log(const char *format, ...) {
 }
 
 //static bool qhy_control_write(libusb_device_handle *handle, unsigned req, unsigned char* data, unsigned length) {
-//  int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_WRITE, req, 0, 0, data, length, 0);
-//  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
-//  return rc >= 0;
+// int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_WRITE, req, 0, 0, data, length, 0);
+// QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
+// return rc >= 0;
 //}
 //
 //static bool qhy_control_read(libusb_device_handle *handle, unsigned req, unsigned char* data, unsigned length) {
-//  int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_READ, req, 0, 0, data, length, 0);
-//  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
-//  return rc >= 0;
+// int rc = libusb_control_transfer(handle, QHYCCD_REQUEST_READ, req, 0, 0, data, length, 0);
+// QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
+// return rc >= 0;
 //}
 //
 //static bool qhy_write(libusb_device_handle *handle, unsigned char *data, unsigned length) {
-//  int length_transfered;
-//  int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_WRITE_ENDPOINT, data, length, &length_transfered, 0);
-//  QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
-//  return rc >= 0;
+// int length_transfered;
+// int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_WRITE_ENDPOINT, data, length, &length_transfered, 0);
+// QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
+// return rc >= 0;
 //}
 //
 //static bool qhy_read(libusb_device_handle *handle, unsigned char *data, unsigned length) {
-//  int length_transfered;
-//  int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_READ_ENDPOINT, data, length, &length_transfered, 0);
-//  QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
-//  return rc >= 0;
+// int length_transfered;
+// int rc = libusb_bulk_transfer(handle, QHYCCD_INTERRUPT_READ_ENDPOINT, data, length, &length_transfered, 0);
+// QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s\n", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK" ));
+// return rc >= 0;
 //}
 
 int libqhy_i2c_write(libusb_device_handle *handle, unsigned addr,unsigned short value) {

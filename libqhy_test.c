@@ -37,34 +37,34 @@ static void *test(libusb_device *dev) {
       libqhy_start(context);
       libqhy_read_pixels(context, pixels);
       printf("\n %04x %04x %04x %04x\n", pixels[0], pixels[1], pixels[2], pixels[3]);
-//      if (context->has_cooler) {
-//        printf("\nCooler test...\n\n");
-//        libqhy_set_cooler(context, true, -10);
-//        sleep(1);
-//        bool state;
-//        double temperature, power;
-//        libqhy_check_cooler(context, &state, &power, &temperature);
-//        sleep(1);
-//        libqhy_check_cooler(context, &state, &power, &temperature);
-//        sleep(1);
-//        libqhy_set_cooler(context, false, 0);
-//      } else {
+//     if (context->has_cooler) {
+//       printf("\nCooler test...\n\n");
+//       libqhy_set_cooler(context, true, -10);
+//       sleep(1);
+//       bool state;
+//       double temperature, power;
+//       libqhy_check_cooler(context, &state, &power, &temperature);
+//       sleep(1);
+//       libqhy_check_cooler(context, &state, &power, &temperature);
+//       sleep(1);
+//       libqhy_set_cooler(context, false, 0);
+//     } else {
         printf("\nTemperature sensor test...\n\n");
         double temperature;
         libqhy_get_temperature(context, &temperature);
-//      }
-//      if (context->has_guider_port) {
-//        printf("\nGuide relay test...\n\n");
-//        libqhy_guide_relays(context, QHY_GUIDE_EAST);
-//        sleep(1);
-//        libqhy_guide_relays(context, QHY_GUIDE_WEST);
-//        sleep(1);
-//        libqhy_guide_relays(context, QHY_GUIDE_NORTH);
-//        sleep(1);
-//        libqhy_guide_relays(context, QHY_GUIDE_SOUTH);
-//        sleep(1);
-//        libqhy_guide_relays(context, 0);
-//      }
+//     }
+//     if (context->has_guider_port) {
+//       printf("\nGuide relay test...\n\n");
+//       libqhy_guide_relays(context, QHY_GUIDE_EAST);
+//       sleep(1);
+//       libqhy_guide_relays(context, QHY_GUIDE_WEST);
+//       sleep(1);
+//       libqhy_guide_relays(context, QHY_GUIDE_NORTH);
+//       sleep(1);
+//       libqhy_guide_relays(context, QHY_GUIDE_SOUTH);
+//       sleep(1);
+//       libqhy_guide_relays(context, 0);
+//     }
       printf("\nTest OK\n\n");
       libqhy_close(context);
     }
