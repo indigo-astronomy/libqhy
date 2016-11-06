@@ -43,7 +43,7 @@ endif
 
 ifeq ($(OS_DETECTED),Darwin)
 	CC=gcc
-	CFLAGS=-Iinclude -std=gnu11 -mmacosx-version-min=10.9
+	CFLAGS=-fPIC -O3 -Iinclude -std=gnu11 -mmacosx-version-min=10.9
 	LDFLAGS=-framework CoreFoundation -framework IOKit -Llib/macOS lib/macOS/libusb-1.0.a 
 	AR=ar
 	ARFLAGS=-rv
@@ -51,9 +51,10 @@ endif
 
 ifeq ($(OS_DETECTED),Linux)
 	CC=gcc
-	CFLAGS=-Iinclude -std=gnu11 -pthread
 	ifeq ($(ARCH_DETECTED),ARM)
-		CFLAGS=-march=armv6 -mfpu=vfp -mfloat-abi=hard -std=gnu11 -pthread
+		CFLAGS=-fPIC -O3 -march=armv6 -mfpu=vfp -mfloat-abi=hard -std=gnu11 -pthread
+  else
+    CFLAGS=-fPIC -O3 -Iinclude -std=gnu11 -pthread
 	endif
 	LDFLAGS=-lm -lrt -lusb-1.0
 	AR=ar
@@ -69,7 +70,7 @@ init:
 	printf "#define LIBQHY_VERSION \"$(LIBQHY_VERSION)\"\n#define LIBQHY_OS \"$(OS_DETECTED)\"\n#define LIBQHY_ARCH \"$(ARCH_DETECTED)\"\n" >config.h
 	install -d $(dir $(LIBQHY))
 
-$(LIBQHY):	libqhy.o libqhy_5ii.o libqhy_5ii_firmware.o
+$(LIBQHY):	libqhy.o libqhy_5ii.o libqhy_5ii_data.o
 	$(AR) $(ARFLAGS) $@ $^
 
 libqhy_test: libqhy_test.o $(LIBQHY)

@@ -12,7 +12,7 @@
 		590110351DC7E9CA00B5CD8E /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 599ADD301DC7C780000D85FD /* libusb-1.0.a */; };
 		590110381DC7E9DF00B5CD8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590110371DC7E9DF00B5CD8E /* Cocoa.framework */; };
 		5901103A1DC7E9E400B5CD8E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590110391DC7E9E400B5CD8E /* IOKit.framework */; };
-		5901103C1DC8A92200B5CD8E /* libqhy_5ii_firmware.c in Sources */ = {isa = PBXBuildFile; fileRef = 5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */; };
+		5901103C1DC8A92200B5CD8E /* libqhy_5ii_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 5901103B1DC8A92200B5CD8E /* libqhy_5ii_data.c */; };
 		5901103E1DC8AAED00B5CD8E /* libqhy_base.h in Headers */ = {isa = PBXBuildFile; fileRef = 5901103D1DC8AAED00B5CD8E /* libqhy_base.h */; };
 		590112A01DC9438300B5CD8E /* libqhy_5ii.c in Sources */ = {isa = PBXBuildFile; fileRef = 5901129F1DC9438300B5CD8E /* libqhy_5ii.c */; };
 		599ADD3D1DC7CBD8000D85FD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 599ADD3C1DC7CBD8000D85FD /* main.c */; };
@@ -56,7 +56,7 @@
 		5901102A1DC7E97300B5CD8E /* libqhy_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libqhy_test; sourceTree = BUILT_PRODUCTS_DIR; };
 		590110371DC7E9DF00B5CD8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		590110391DC7E9E400B5CD8E /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_5ii_firmware.c; sourceTree = "<group>"; };
+		5901103B1DC8A92200B5CD8E /* libqhy_5ii_data.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_5ii_data.c; sourceTree = "<group>"; };
 		5901103D1DC8AAED00B5CD8E /* libqhy_base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libqhy_base.h; sourceTree = "<group>"; };
 		5901129F1DC9438300B5CD8E /* libqhy_5ii.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libqhy_5ii.c; sourceTree = "<group>"; };
 		599ADD251DC7C66B000D85FD /* liblibqhy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibqhy.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,7 +118,7 @@
 				5901103D1DC8AAED00B5CD8E /* libqhy_base.h */,
 				599ADD411DC7D8FB000D85FD /* libqhy_5ii.h */,
 				5901129F1DC9438300B5CD8E /* libqhy_5ii.c */,
-				5901103B1DC8A92200B5CD8E /* libqhy_5ii_firmware.c */,
+				5901103B1DC8A92200B5CD8E /* libqhy_5ii_data.c */,
 				599ADD421DC7D946000D85FD /* libqhy.c */,
 				590110241DC7E7D400B5CD8E /* libqhy_test.c */,
 				599ADD321DC7C7BC000D85FD /* Firmware */,
@@ -290,7 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5901103C1DC8A92200B5CD8E /* libqhy_5ii_firmware.c in Sources */,
+				5901103C1DC8A92200B5CD8E /* libqhy_5ii_data.c in Sources */,
 				590112A01DC9438300B5CD8E /* libqhy_5ii.c in Sources */,
 				599ADD431DC7D946000D85FD /* libqhy.c in Sources */,
 			);
