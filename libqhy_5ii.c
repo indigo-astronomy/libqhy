@@ -77,14 +77,10 @@ static int set_ppl(libqhy_device_context *context, int ppl) {
 	}
 	rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3082, 0x0029);
 	if (context->type == QHY_5LII) {
-		if (context->stream_mode) {
-			if (context->long_time_mode)
-				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
-			else
-				rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x1330);
-		} else {
+		if (context->long_time_mode)
 			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x5330);
-		}
+		else
+			rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x1330);
 	} else {
 		rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x30B0, 0x1330);
 	}
@@ -217,7 +213,7 @@ static int set_bits_per_pixel(libqhy_device_context *context, unsigned bits_per_
 	return rc;
 }
 
-static int set_exposure_time(libqhy_device_context *context, double time) {
+static int set_exposure_time(libqhy_device_context *context, unsigned time) {
   libusb_device_handle *handle = context->handle;
   int rc = 0;
   switch (context->type) {
@@ -235,21 +231,20 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
       rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x09, &reg09);
       rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x0c, &reg0C);
       double pixelPeriod = 1.0 / cmosclk;
-      uint32_t exp_time = time;
       double a = reg04 + 1;
       double p1 = 242;
       double p2 = 2 + reg05 - 19;
       double q = p1 + p2;
       double row_time = (a + q) * pixelPeriod;
-      double max_short_exp_time = (15000 * row_time - 180 * pixelPeriod - 4 * reg0C * pixelPeriod);
+      double max_short_time = (15000 * row_time - 180 * pixelPeriod - 4 * reg0C * pixelPeriod);
       uint8_t data[4];
-      if (exp_time > max_short_exp_time) {
+      if (time > max_short_time) {
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x09, 15000);
-        exp_time = exp_time - max_short_exp_time;
+        time = time - max_short_time;
         data[0] = 0;
-        data[1] = ((exp_time / 1000) & ~0xff00ffff) >> 16;
-        data[2] = ((exp_time / 1000) & ~0xffff00ff) >> 8;
-        data[3] = ((exp_time / 1000) & ~0xffffff00);
+        data[1] = ((time / 1000) & ~0xff00ffff) >> 16;
+        data[2] = ((time / 1000) & ~0xffff00ff) >> 8;
+        data[3] = ((time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
       } else {
@@ -260,7 +255,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(10000);
-        reg09 = (exp_time + 180 * pixelPeriod + 4 * reg0C * pixelPeriod) / row_time;
+        reg09 = (time + 180 * pixelPeriod + 4 * reg0C * pixelPeriod) / row_time;
         if (reg09 < 1)
           reg09 = 1;
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x09, reg09);
@@ -317,15 +312,14 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         row_time = 2 * pixel_period * (w / 2 + max_hb_hbmin);
       else
         row_time = 41 + 186 * (reg22_54 + 1) + 99;
-      double max_short_exp_time = 15000 * row_time - so * 2 * pixel_period;
-      uint32_t exp_time = time;
+      double max_short_time = 15000 * row_time - so * 2 * pixel_period;
       uint8_t data[4] = { 0, 0, 0, 0 };
-      if (exp_time > max_short_exp_time) {
+      if (time > max_short_time) {
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x09, 15000);
         data[0] = 0;
-        data[1] = ((exp_time / 1000) & ~0xff00ffff) >> 16;
-        data[2] = ((exp_time / 1000) & ~0xffff00ff) >> 8;
-        data[3] = ((exp_time / 1000) & ~0xffffff00);
+        data[1] = ((time / 1000) & ~0xff00ffff) >> 16;
+        data[2] = ((time / 1000) & ~0xffff00ff) >> 8;
+        data[3] = ((time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
         reg09 = 15000;
@@ -333,7 +327,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(100000);
-        reg09 = (exp_time + so * 2 * pixel_period) / row_time;
+        reg09 = (time + so * 2 * pixel_period) / row_time;
         if (reg09 < 1)
           reg09 = 1;
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x09, reg09);
@@ -365,32 +359,32 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x300C, &reg300C);
       }
       double row_time = reg300C * pixelPeriod / context->ppl_ratio;
-      double max_short_exp_time = 65000 * row_time;
-      uint32_t exp_time = time;
-      if (exp_time > max_short_exp_time) {
+      double max_short_time = 65000 * row_time;
+      uint32_t time = time;
+      if (time > max_short_time) {
         context->long_time_mode = true;
         libqhy_i2c_write(handle, 0x3012,65000);
         usleep(1000);
-        exp_time = exp_time - max_short_exp_time;
+        time = time - max_short_time;
         data[0] = 0;
-        data[1] = (uint8_t)(((exp_time / 1000) & ~0xff00ffff) >> 16);
-        data[2] = (uint8_t)(((exp_time / 1000) & ~0xffff00ff) >> 8);
-        data[3] = (uint8_t)((exp_time / 1000) & ~0xffffff00);
+        data[1] = (uint8_t)(((time / 1000) & ~0xff00ffff) >> 16);
+        data[2] = (uint8_t)(((time / 1000) & ~0xffff00ff) >> 8);
+        data[3] = (uint8_t)((time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-        exp_time = exp_time + max_short_exp_time;
+        time = time + max_short_time;
         reg3012 = 65000;
       } else {
         context->long_time_mode = false;
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(10000);
-        reg3012 = (uint16_t)(exp_time / row_time);
+        reg3012 = (uint16_t)(time / row_time);
         if(reg3012 < 1)
           reg3012 = 1;
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3012, reg3012);
         usleep(1000);
-        exp_time = (uint32_t)(reg3012 * row_time);
+        time = (uint32_t)(reg3012 * row_time);
       }
       break;
     }
@@ -416,22 +410,21 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
       rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x300C, &reg300C);
       rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x300C, &reg300C);
       double row_time = reg300C * pixelPeriod;
-      double max_short_exp_time = 65000 * row_time;
-      uint32_t exp_time = time;
-      if (exp_time > max_short_exp_time) {
+      double max_short_time = 65000 * row_time;
+      if (time > max_short_time) {
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0xC840, 65000);
         usleep(10000);
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0xC842, 0xFFFF);
-        exp_time = exp_time - max_short_exp_time - pixelPeriod * 1.0 * 0xFFFF;
+        time = time - max_short_time - pixelPeriod * 1.0 * 0xFFFF;
         data[0] = 0;
-        data[1] = (uint8_t)(((exp_time / 1000) & ~0xff00ffff) >> 16);
-        data[2] = (uint8_t)(((exp_time / 1000) & ~0xffff00ff) >> 8);
-        data[3] = (uint8_t)((exp_time / 1000) & ~0xffffff00);
+        data[1] = (uint8_t)(((time / 1000) & ~0xff00ffff) >> 16);
+        data[2] = (uint8_t)(((time / 1000) & ~0xffff00ff) >> 8);
+        data[3] = (uint8_t)((time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
         QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
         reg3012 = 65000;
       } else {
-        reg3012 = (uint16_t)(exp_time / row_time);
+        reg3012 = (uint16_t)(time / row_time);
         if (reg3012 < 1)
           reg3012 = 1;
         rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0xC840, reg3012);
@@ -456,18 +449,14 @@ static int set_usb_speed(libqhy_device_context *context, int speed) {
     case QHY_5PII:
     case QHY_5HII:
     case QHY_5TII:
-      if (context->stream_mode) {
-        if (context->frame_bits_per_pixel == 8)
-          data[0] = context->usb_speed = speed;
-        else {
-          if(speed >= 1)
-            data[0] = context->usb_speed = 1;
-          else
-            data[0] = context->usb_speed = 0;
-        }
-      } else {
-        data[0] = context->usb_speed;
-      }
+			if (context->frame_bits_per_pixel == 8)
+				data[0] = context->usb_speed = speed;
+			else {
+				if(speed >= 1)
+					data[0] = context->usb_speed = 1;
+				else
+					data[0] = context->usb_speed = 0;
+			}
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc8, 0, 0, data, 1, 3000);
       QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
       rc = rc < 0 ? rc : set_exposure_time(context, context->exposure_time);
@@ -591,14 +580,10 @@ static int set_gain(libqhy_device_context *context, double gain) {
 			gain = 1.0348 + context->gain * 38.7652 / 100;
 			//gain = 79.6 * context->gain / 100.0;
 			uint16_t reg30B0;
-			if (context->stream_mode) {
-				if (context->long_time_mode)
-					reg30B0 = 0x5330;
-				else
-					reg30B0 = 0x1330;
-			} else {
+			if (context->long_time_mode)
 				reg30B0 = 0x5330;
-			}
+			else
+				reg30B0 = 0x1330;
 			uint16_t base_gain;
 			double c[8] = { 10, 8, 5, 4, 2.5, 2, 1.25, 1 };
 			double s[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -765,7 +750,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 30;
-        context->stream_mode = true;
         break;
       case 2:
         QHY_DEBUG(qhy_log("*** sub-type: QHY5T-II"));
@@ -778,7 +762,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 8;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 0;
-        context->stream_mode = false;
         break;
       case 5:
         QHY_DEBUG(qhy_log("*** sub-type: QHY5P-II"));
@@ -791,7 +774,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 0;
-        context->stream_mode = true;
         break;
       case 6:
         QHY_DEBUG(qhy_log("*** sub-type: QHY5L-II"));
@@ -804,7 +786,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 100;
-        context->stream_mode = true;
         break;
       case 9:
         QHY_DEBUG(qhy_log("*** sub-type: QHY5R-II"));
@@ -817,7 +798,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 30;
-        context->stream_mode = true;
         context->offset = 32;
         break;
       case 22:
@@ -831,7 +811,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
         context->bits_per_pixel = 16;
         context->max_bin_hor = context->max_bin_vert = 1;
         context->usb_traffic = 30;
-        context->stream_mode = true;
         break;
     }
     data[0] = data[1] = data[2] = data[3] = 0;
@@ -840,7 +819,6 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
     rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3012, 1);
 		rc = rc < 0 ? rc : init_regs(context);
 		rc = rc < 0 ? rc : set_bits_per_pixel(context, 8);
-		rc = rc < 0 ? rc : set_usb_traffic(context);
     rc = rc < 0 ? rc : set_usb_speed(context, 0);
 		rc = rc < 0 ? rc : set_resolution(context, context->width, context->height);
     rc = rc < 0 ? rc : set_exposure_time(context, 1000);
@@ -876,7 +854,7 @@ bool libqhy_5ii_get_temperature(libqhy_device_context *context, double *temperat
 
 bool libqhy_5ii_set_exposure_time(libqhy_device_context *context, double exposure) {
 	pthread_mutex_lock(&context->usb_mutex);
-	set_exposure_time(context, context->exposure_time = 1000 * exposure);
+	set_exposure_time(context, context->exposure_time = 1000000 * exposure);
 	pthread_mutex_unlock(&context->usb_mutex);
 	return true;
 }

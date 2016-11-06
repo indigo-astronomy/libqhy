@@ -40,9 +40,8 @@ typedef struct libqhy_device_context {
 	pthread_mutex_t lock;
 	int usb_speed;
 	int usb_traffic;
-	bool stream_mode;
 	bool long_time_mode;
-	double exposure_time;
+	unsigned exposure_time;
 	double gain;
 	int offset;
 	bool is_colour;
