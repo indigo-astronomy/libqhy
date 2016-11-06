@@ -360,7 +360,6 @@ static int set_exposure_time(libqhy_device_context *context, unsigned time) {
       }
       double row_time = reg300C * pixelPeriod / context->ppl_ratio;
       double max_short_time = 65000 * row_time;
-      uint32_t time = time;
       if (time > max_short_time) {
         context->long_time_mode = true;
         libqhy_i2c_write(handle, 0x3012,65000);
@@ -459,7 +458,6 @@ static int set_usb_speed(libqhy_device_context *context, int speed) {
 			}
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc8, 0, 0, data, 1, 3000);
       QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-      rc = rc < 0 ? rc : set_exposure_time(context, context->exposure_time);
       break;
     case QHY_5RII:
       if (context->frame_bits_per_pixel == 8) {
