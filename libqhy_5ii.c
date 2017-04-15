@@ -213,7 +213,7 @@ static int set_bits_per_pixel(libqhy_device_context *context, unsigned bits_per_
 	unsigned char data[1] = { bits_per_pixel == 16 ? 1 : 0 };
 	context->frame_bits_per_pixel = bits_per_pixel;
 	int rc = libusb_control_transfer(context->handle, REQUEST_WRITE, 0xcd, 0, 0, data, 1, 3000);
-	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
 	return rc;
 }
 
@@ -251,14 +251,14 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         data[2] = ((exp_time / 1000) & ~0xffff00ff) >> 8;
         data[3] = ((exp_time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       } else {
         data[0] = 0;
         data[1] = 0;
         data[2] = 0;
         data[3] = 0;
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(10000);
         reg09 = (exp_time + 180 * pixelPeriod + 4 * reg0C * pixelPeriod) / row_time;
         if (reg09 < 1)
@@ -327,11 +327,11 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         data[2] = ((exp_time / 1000) & ~0xffff00ff) >> 8;
         data[3] = ((exp_time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         reg09 = 15000;
       } else {
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(100000);
         reg09 = (exp_time + so * 2 * pixel_period) / row_time;
         if (reg09 < 1)
@@ -352,7 +352,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         cmosclk = 12;
       uint8_t data[4] = { 0, 0, 0, 0 };
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-      QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+      QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       usleep(10000);
       double pixelPeriod = 1 / cmosclk; // unit: us
       rc = rc < 0 ? rc : libqhy_i2c_read(handle, 0x300C, &reg300C);
@@ -377,13 +377,13 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         data[2] = (uint8_t)(((exp_time / 1000) & ~0xffff00ff) >> 8);
         data[3] = (uint8_t)((exp_time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         exp_time = exp_time + max_short_exp_time;
         reg3012 = 65000;
       } else {
         context->long_time_mode = false;
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         usleep(10000);
         reg3012 = (uint16_t)(exp_time / row_time);
         if(reg3012 < 1)
@@ -397,7 +397,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
     case QHY_5RII: {
       uint8_t data[4] = { 0, 0, 0, 0 };
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-      QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+      QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       double cmosclk;
       if (context->frame_bits_per_pixel == 8) {
         if(context->usb_speed  == 1)
@@ -428,7 +428,7 @@ static int set_exposure_time(libqhy_device_context *context, double time) {
         data[2] = (uint8_t)(((exp_time / 1000) & ~0xffff00ff) >> 8);
         data[3] = (uint8_t)((exp_time / 1000) & ~0xffffff00);
         rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc1, 0, 0, data, 4, 3000);
-        QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+        QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
         reg3012 = 65000;
       } else {
         reg3012 = (uint16_t)(exp_time / row_time);
@@ -469,7 +469,7 @@ static int set_usb_speed(libqhy_device_context *context, int speed) {
         data[0] = context->usb_speed;
       }
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc8, 0, 0, data, 1, 3000);
-      QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+      QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       rc = rc < 0 ? rc : set_exposure_time(context, context->exposure_time);
       break;
     case QHY_5RII:
@@ -485,7 +485,7 @@ static int set_usb_speed(libqhy_device_context *context, int speed) {
           data[0] = context->usb_speed = 0;
       }
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc9, 0, 0, data, 1, 3000);
-      QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+      QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       break;
     default:
       break;
@@ -752,7 +752,7 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
   int rc = 0;
   uint8_t data[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
   rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_READ, 0xCA, 0, 0x10, data, 16, 2000);
-  QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+  QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
   if (rc >= 0) {
     switch (data[0]) {
       case 1:
@@ -836,7 +836,7 @@ bool libqhy_5ii_init(libqhy_device_context *context) {
     }
     data[0] = data[1] = data[2] = data[3] = 0;
     rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xC1, 0, 0, data, 4, 2000);
-    QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+    QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
     rc = rc < 0 ? rc : libqhy_i2c_write(handle, 0x3012, 1);
 		rc = rc < 0 ? rc : init_regs(context);
 		rc = rc < 0 ? rc : set_bits_per_pixel(context, 8);
@@ -896,7 +896,7 @@ bool libqhy_5ii_start(libqhy_device_context *context) {
 	pthread_mutex_lock(&context->usb_mutex);
 	unsigned exposure_time = (unsigned)context->exposure_time;
   int rc = libusb_control_transfer(handle, REQUEST_WRITE,  0xb3, exposure_time & 0xffff, exposure_time >> 16, data, 1, 2000);
-	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
 	set_gain(context, context->gain);
 	pthread_mutex_unlock(&context->usb_mutex);
 	return rc >= 0;
@@ -912,14 +912,14 @@ bool libqhy_5ii_read_pixels(libqhy_device_context *context, unsigned short *imag
   int rc = 0;
   while (rc >= 0 && remaining > 0) {
     rc = libusb_bulk_transfer(handle, DATA_READ_ENDPOINT, buffer + curent_position, remaining, &bytes_transfered, (int)context->exposure_time + 1500);
-    QHY_DEBUG(qhy_log("libusb_bulk_transfer [%d] -> %s (%d)", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK", bytes_transfered));
+    QHY_DEBUG(qhy_log("libusb_bulk_transfer -> %s (%d)", rc < 0 ? libusb_error_name(rc) : "OK", bytes_transfered));
     if (rc < 0) {
       if (retry_count > 5) {
         QHY_DEBUG(qhy_log("QHY5II read pixels -> Failed (retry count > 5)"));
         return false;
       }
 			rc = libusb_clear_halt(handle, DATA_READ_ENDPOINT);
-			QHY_DEBUG(qhy_log("libusb_clear_halt [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+			QHY_DEBUG(qhy_log("libusb_clear_halt -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       retry_count++;
       continue;
     }
@@ -953,6 +953,6 @@ bool libqhy_5ii_stop(libqhy_device_context *context) {
 	pthread_mutex_lock(&context->usb_mutex);
 	int rc = libusb_control_transfer(handle, REQUEST_WRITE, 0xC1, 0, 0, data, 4, 2000);
 	pthread_mutex_unlock(&context->usb_mutex);
-	QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
+	QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
 	return rc >= 0;
 }
