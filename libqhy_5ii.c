@@ -457,12 +457,8 @@ static int set_usb_speed(libqhy_device_context *context, int speed) {
 					data[0] = context->usb_speed = 0;
 			}
       rc = rc < 0 ? rc : libusb_control_transfer(handle, REQUEST_WRITE, 0xc8, 0, 0, data, 1, 3000);
-<<<<<<< HEAD
-      QHY_DEBUG(qhy_log("libusb_control_transfer [%d] -> %s", __LINE__, rc < 0 ? libusb_error_name(rc) : "OK"));
-=======
       QHY_DEBUG(qhy_log("libusb_control_transfer -> %s", rc < 0 ? libusb_error_name(rc) : "OK"));
       rc = rc < 0 ? rc : set_exposure_time(context, context->exposure_time);
->>>>>>> 8b09665
       break;
     case QHY_5RII:
       if (context->frame_bits_per_pixel == 8) {
